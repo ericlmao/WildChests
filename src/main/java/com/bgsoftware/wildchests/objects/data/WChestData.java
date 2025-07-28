@@ -7,6 +7,7 @@ import com.bgsoftware.wildchests.api.objects.DepositMethod;
 import com.bgsoftware.wildchests.api.objects.data.ChestData;
 import com.bgsoftware.wildchests.api.objects.data.InventoryData;
 import com.bgsoftware.wildchests.key.KeySet;
+import com.bgsoftware.wildchests.utils.ChestUtils;
 import com.bgsoftware.wildchests.utils.RecipeUtils;
 import com.google.common.collect.Iterators;
 import org.bukkit.Bukkit;
@@ -38,6 +39,7 @@ public final class WChestData implements ChestData {
     private Map<Integer, InventoryData> pagesData;
     private int defaultPagesAmount;
     private double multiplier;
+    private int speed;
     private boolean autoCollect;
     private int autoSuctionRange;
     private boolean autoSuctionChunk;
@@ -66,6 +68,7 @@ public final class WChestData implements ChestData {
         this.blacklisted = new KeySet();
         this.whitelisted = new KeySet();
         this.particles = Collections.emptyList();
+        this.speed = ChestUtils.DEFAULT_COOLDOWN;
     }
 
     @Override
@@ -155,6 +158,11 @@ public final class WChestData implements ChestData {
     @Override
     public double getMultiplier() {
         return multiplier;
+    }
+
+    @Override
+    public int getSpeed() {
+        return speed;
     }
 
     @Override
@@ -255,6 +263,13 @@ public final class WChestData implements ChestData {
     @Override
     public void setMultiplier(double multiplier) {
         this.multiplier = Math.max(0, multiplier);
+    }
+
+    @Override
+    public void setSpeed(int speed) {
+        if (speed < 0) throw new IllegalArgumentException("Speed cannot be negative.");
+
+        this.speed = speed;
     }
 
     @Override

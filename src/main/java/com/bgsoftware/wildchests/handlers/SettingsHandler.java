@@ -223,6 +223,15 @@ public final class SettingsHandler {
             chestData.setMultiplier(section.getDouble("multiplier"));
         }
 
+        if (section.contains("speed")) {
+            int speed = section.getInt("speed", 0);
+            if (speed < 0) {
+                WildChestsPlugin.log("Found an invalid speed for " + chestName + " - setting default speed to 0");
+                speed = 0;
+            }
+            chestData.setSpeed(speed);
+        }
+
         if (section.contains("auto-collect")) {
             chestData.setAutoCollect(section.getBoolean("auto-collect"));
         }

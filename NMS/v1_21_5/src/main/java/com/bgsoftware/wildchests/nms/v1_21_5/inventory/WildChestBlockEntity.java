@@ -62,7 +62,7 @@ public class WildChestBlockEntity extends ChestBlockEntity implements WorldlyCon
     private final BlockPos blockPos;
     private final boolean isTrappedChest;
 
-    private short currentCooldown = ChestUtils.DEFAULT_COOLDOWN;
+    private short currentCooldown;
     private int viewingCount = 0;
 
     private AABB suctionItems = null;
@@ -72,6 +72,7 @@ public class WildChestBlockEntity extends ChestBlockEntity implements WorldlyCon
     public WildChestBlockEntity(Chest chest, ServerLevel serverLevel, BlockPos blockPos) {
         super(blockPos, serverLevel.getBlockState(blockPos));
         this.chest = chest;
+        this.currentCooldown = (short) chest.getData().getSpeed();
         this.serverLevel = serverLevel;
         this.blockPos = blockPos;
         this.level = serverLevel;
@@ -206,7 +207,7 @@ public class WildChestBlockEntity extends ChestBlockEntity implements WorldlyCon
             return;
         }
 
-        currentCooldown = ChestUtils.DEFAULT_COOLDOWN;
+        currentCooldown = (short) chestData.getSpeed();
 
         if (suctionItems != null) {
             handleSuctionItems(chestData);
