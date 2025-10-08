@@ -89,6 +89,12 @@ public interface ChestData {
     double getMultiplier();
 
     /**
+     * Get the speed of the chest.
+     * @return The speed in ticks.
+     */
+    int getSpeed();
+
+    /**
      * Check whether or not this chest has auto-collect enabled.
      */
     boolean isAutoCollect();
@@ -188,6 +194,12 @@ public interface ChestData {
      * @param multiplier The new multiplier
      */
     void setMultiplier(double multiplier);
+
+    /**
+     * Set the speed of the chest.
+     * @param speed The new speed, in ticks.
+     */
+    void setSpeed(int speed);
 
     /**
      * Set whether or not this chest should have auto-collect enabled.

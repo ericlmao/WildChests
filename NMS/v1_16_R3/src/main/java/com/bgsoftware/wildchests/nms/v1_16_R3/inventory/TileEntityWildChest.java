@@ -54,7 +54,7 @@ public class TileEntityWildChest extends TileEntityChest implements IWorldInvent
 
     private NonNullList<ItemStack> itemsAsNMSItemsView;
 
-    private short currentCooldown = ChestUtils.DEFAULT_COOLDOWN;
+    private short currentCooldown;
 
     private AxisAlignedBB suctionItems = null;
     private boolean autoCraftMode = false;
@@ -62,6 +62,7 @@ public class TileEntityWildChest extends TileEntityChest implements IWorldInvent
 
     public TileEntityWildChest(Chest chest, World world, BlockPosition blockPosition) {
         this.chest = chest;
+        this.currentCooldown = (short) chest.getData().getSpeed();
         this.world = world;
         updateTile(this, world, blockPosition);
         updateTile(tileEntityChest, world, blockPosition);
@@ -207,7 +208,7 @@ public class TileEntityWildChest extends TileEntityChest implements IWorldInvent
             return;
         }
 
-        currentCooldown = ChestUtils.DEFAULT_COOLDOWN;
+        currentCooldown = (short) chestData.getSpeed();
 
         if (suctionItems != null) {
             handleSuctionItems(chestData);
