@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://bg-software.com/imgs/wildchests-logo.png" />
+<img src="https://static.bg-software.com/imgs/wildchests-logo.png" />
 <h2 align="center">New era of chests!</h2>
 </p>
 <br>
@@ -57,3 +57,5 @@ for bug fixes.
 ## License
 
 This plugin is licensed under GNU GPL v3.0
+
+This plugin uses HikariCP which you can find [here](https://github.com/brettwooldridge/HikariCP).
