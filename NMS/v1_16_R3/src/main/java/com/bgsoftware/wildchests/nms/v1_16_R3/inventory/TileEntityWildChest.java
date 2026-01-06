@@ -185,19 +185,6 @@ public class TileEntityWildChest extends TileEntityChest implements IWorldInvent
         ChestData chestData = chest.getData();
         assert world != null;
 
-        {
-            double x = position.getX() + world.random.nextFloat();
-            double y = position.getY() + world.random.nextFloat();
-            double z = position.getZ() + world.random.nextFloat();
-            for (String particle : chestData.getChestParticles()) {
-                try {
-                    ((WorldServer) world).sendParticles(null, CraftParticle.toNMS(Particle.valueOf(particle)),
-                            x, y, z, 0, 0.0, 0.0, 0.0, 1.0, false);
-                } catch (Exception ignored) {
-                }
-            }
-        }
-
         if (--currentCooldown >= 0)
             return;
 
@@ -254,6 +241,22 @@ public class TileEntityWildChest extends TileEntityChest implements IWorldInvent
         );
         autoCraftMode = chestData.isAutoCrafter();
         autoSellMode = chestData.isSellMode();
+    }
+
+    @Override
+    public void spawnParticles() {
+        {
+            double x = position.getX() + world.random.nextFloat();
+            double y = position.getY() + world.random.nextFloat();
+            double z = position.getZ() + world.random.nextFloat();
+            for (String particle : chest.getData().getChestParticles()) {
+                try {
+                    ((WorldServer) world).sendParticles(null, CraftParticle.toNMS(Particle.valueOf(particle)),
+                            x, y, z, 0, 0.0, 0.0, 0.0, 1.0, false);
+                } catch (Exception ignored) {
+                }
+            }
+        }
     }
 
     @Override

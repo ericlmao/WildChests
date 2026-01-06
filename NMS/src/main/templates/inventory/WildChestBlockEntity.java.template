@@ -189,18 +189,6 @@ public class WildChestBlockEntity extends ChestBlockEntity implements
     public void tick(Level level, BlockPos blockPos, BlockState blockState, WildChestBlockEntity blockEntity) {
         ChestData chestData = chest.getData();
 
-        {
-            double x = blockPos.getX() + level.getRandom().nextFloat();
-            double y = blockPos.getY() + level.getRandom().nextFloat();
-            double z = blockPos.getZ() + level.getRandom().nextFloat();
-            for (String particle : chestData.getChestParticles()) {
-                try {
-                    sendParticlesInternal(Particle.valueOf(particle), x, y, z);
-                } catch (Exception ignored) {
-                }
-            }
-        }
-
         if (--currentCooldown >= 0)
             return;
 
@@ -259,6 +247,23 @@ public class WildChestBlockEntity extends ChestBlockEntity implements
         );
         autoCraftMode = chestData.isAutoCrafter();
         autoSellMode = chestData.isSellMode();
+    }
+
+    @Override
+    public void spawnParticles() {
+        {
+            if (level == null) return;
+
+            double x = blockPos.getX() + level.getRandom().nextFloat();
+            double y = blockPos.getY() + level.getRandom().nextFloat();
+            double z = blockPos.getZ() + level.getRandom().nextFloat();
+            for (String particle : chest.getData().getChestParticles()) {
+                try {
+                    sendParticlesInternal(Particle.valueOf(particle), x, y, z);
+                } catch (Exception ignored) {
+                }
+            }
+        }
     }
 
     @Override

@@ -241,4 +241,8 @@ public interface Chest {
      */
     boolean canPlaceItemThroughFace(ItemStack itemStack);
 
+    /**
+     * Send particles effects to all players around the chest.
+     */
+    void sendParticles();
 }

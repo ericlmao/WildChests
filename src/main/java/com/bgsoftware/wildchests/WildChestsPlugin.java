@@ -23,6 +23,7 @@ import com.bgsoftware.wildchests.nms.NMSAdapter;
 import com.bgsoftware.wildchests.nms.NMSInventory;
 import com.bgsoftware.wildchests.scheduler.Scheduler;
 import com.bgsoftware.wildchests.task.NotifierTask;
+import com.bgsoftware.wildchests.task.ParticleTask;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -90,6 +91,8 @@ public final class WildChestsPlugin extends JavaPlugin implements WildChests {
         Locale.reload(this);
         loadAPI();
         NotifierTask.start();
+
+        Scheduler.runRepeatingTaskAsync(new ParticleTask(chestsManager), 1L);
 
         if (updater.isOutdated()) {
             log("");

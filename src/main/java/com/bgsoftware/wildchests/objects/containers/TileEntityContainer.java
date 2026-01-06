@@ -12,4 +12,5 @@ public interface TileEntityContainer {
 
     void updateData();
 
+    void spawnParticles();
 }
