@@ -112,6 +112,7 @@ public final class SettingsHandler {
         }
 
         PricesProvider_Default.prices = prices;
+        PricesProvider_Default.clearCache();
 
         Map<String, ChestData> chestsData = new HashMap<>();
 
