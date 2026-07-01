@@ -18,9 +18,16 @@ allprojects {
     apply plugin: 'java'
     apply plugin: 'io.github.goooler.shadow'
 
-    java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(8))
+    afterEvaluate {
+        def javaExtension = extensions.getByName('java')
+
+        if (!javaExtension.toolchain.languageVersion.isPresent()) {
+            javaExtension.sourceCompatibility = JavaVersion.VERSION_1_8
+            javaExtension.targetCompatibility = JavaVersion.VERSION_1_8
+
+            tasks.withType(JavaCompile).configureEach {
+                options.release.set(8)
+            }
         }
     }
 
