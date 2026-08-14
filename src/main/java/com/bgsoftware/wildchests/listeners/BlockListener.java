@@ -1,5 +1,6 @@
 package com.bgsoftware.wildchests.listeners;
 
+import com.bgsoftware.common.reflection.ReflectMethod;
 import com.bgsoftware.wildchests.Locale;
 import com.bgsoftware.wildchests.WildChestsPlugin;
 import com.bgsoftware.wildchests.api.objects.chests.Chest;
@@ -39,6 +40,10 @@ public final class BlockListener implements Listener {
 
     private static final EntityType WIND_CHARGE_TYPE = lookupEntityType("WIND_CHARGE");
     private static final EntityType BREEZE_WIND_CHARGE_TYPE = lookupEntityType("BREEZE_WIND_CHARGE");
+
+    // isDropItems was added in 1.12; not available in the 1.8 API this module compiles against.
+    private static final ReflectMethod<Boolean> BLOCK_BREAK_EVENT_IS_DROP_ITEMS =
+            new ReflectMethod<>(BlockBreakEvent.class, "isDropItems");
 
     public BlockListener(WildChestsPlugin plugin) {
         this.plugin = plugin;
@@ -98,7 +103,8 @@ public final class BlockListener implements Listener {
         if (chest == null)
             return;
 
-        if (e.getPlayer().getGameMode() != GameMode.CREATIVE && e.isDropItems()) {
+        if (e.getPlayer().getGameMode() != GameMode.CREATIVE &&
+                BLOCK_BREAK_EVENT_IS_DROP_ITEMS.invokeWithDef(e, true)) {
             ChestData chestData = chest.getData();
             pendingChestDrops.put(e.getBlock().getLocation(), new PendingChestDrop(
                     chestData.getItemStack(), chestData.isAutoCollect(), chest.getLocation()));
