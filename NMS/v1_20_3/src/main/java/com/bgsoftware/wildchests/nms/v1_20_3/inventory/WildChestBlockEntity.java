@@ -10,6 +10,7 @@ import com.bgsoftware.wildchests.nms.v1_20_3.utils.TransformingNonNullList;
 import com.bgsoftware.wildchests.objects.chests.WChest;
 import com.bgsoftware.wildchests.objects.chests.WStorageChest;
 import com.bgsoftware.wildchests.objects.containers.TileEntityContainer;
+import com.bgsoftware.wildchests.utils.ParticleUtils;
 import com.bgsoftware.wildchests.utils.ChestUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -187,12 +188,11 @@ public class WildChestBlockEntity extends ChestBlockEntity implements WorldlyCon
             double y = blockPos.getY() + level.getRandom().nextFloat();
             double z = blockPos.getZ() + level.getRandom().nextFloat();
             for (String particle : chestData.getChestParticles()) {
-                try {
+                Particle resolved = ParticleUtils.resolveParticle(particle, Particle::valueOf);
+                if (resolved != null)
                     this.serverLevel.sendParticles(null,
-                            CraftParticle.createParticleParam(Particle.valueOf(particle), null),
+                            CraftParticle.createParticleParam(resolved, null),
                             x, y, z, 0, 0.0, 0.0, 0.0, 1.0, false);
-                } catch (Exception ignored) {
-                }
             }
         }
 

@@ -9,6 +9,7 @@ import com.bgsoftware.wildchests.objects.chests.WChest;
 import com.bgsoftware.wildchests.objects.chests.WStorageChest;
 import com.bgsoftware.wildchests.objects.containers.TileEntityContainer;
 import com.bgsoftware.wildchests.objects.inventory.WildContainerItem;
+import com.bgsoftware.wildchests.utils.ParticleUtils;
 import com.bgsoftware.wildchests.utils.ChestUtils;
 import com.google.common.base.Predicate;
 import net.minecraft.server.v1_8_R3.AxisAlignedBB;
@@ -254,11 +255,10 @@ public class TileEntityWildChest extends TileEntityChest implements IWorldInvent
             double y = position.getY() + world.random.nextFloat();
             double z = position.getZ() + world.random.nextFloat();
             for (String particle : chest.getData().getChestParticles()) {
-                try {
-                    ((WorldServer) world).sendParticles(null, EnumParticle.valueOf(particle),
+                EnumParticle resolved = ParticleUtils.resolveParticle(particle, EnumParticle::valueOf);
+                if (resolved != null)
+                    ((WorldServer) world).sendParticles(null, resolved,
                             false, x, y, z, 0, 0.0, 0.0, 0.0, 1.0);
-                } catch (Exception ignored) {
-                }
             }
         }
     }
