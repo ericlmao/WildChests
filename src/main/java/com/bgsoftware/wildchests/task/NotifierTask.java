@@ -7,8 +7,10 @@ import com.bgsoftware.wildchests.scheduler.Scheduler;
 import com.bgsoftware.wildchests.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,17 +22,23 @@ public final class NotifierTask {
 
     private static final WildChestsPlugin plugin = WildChestsPlugin.getPlugin();
 
-    private static final Map<UUID, Set<TransactionDetails>> transactions = new HashMap<>();
+    private static SaleNotifications sales;
+    private long nextCrafting;
     private static final Map<UUID, Set<CraftingDetails>> craftings = new HashMap<>();
 
     private static ScheduledTask task = null;
 
     private NotifierTask() {
-        if (plugin.getSettings().notifyInterval > 0) {
-            task = Scheduler.runRepeatingTaskAsync(this::run, plugin.getSettings().notifyInterval);
-        } else {
-            task = null;
-        }
+        nextCrafting = System.currentTimeMillis() + plugin.getSettings().notifyInterval * 50L;
+        task = Scheduler.runRepeatingTaskAsync(this::run, 20L);
+    }
+
+    public static void initialize() throws IOException {
+        sales = new SaleNotifications(plugin.getDataFolder().toPath().resolve("notification-preferences.properties"));
+    }
+
+    public static SaleNotifications getSales() {
+        return sales;
     }
 
     public static void start() {
@@ -42,33 +50,29 @@ public final class NotifierTask {
     }
 
     private void run() {
-        synchronized (transactions) {
-            transactions.forEach((uuid, transactions) -> {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-                if (offlinePlayer.isOnline()) {
-                    Locale.SOLD_CHEST_HEADER.send(offlinePlayer.getPlayer());
-                    BigDecimal totalEarned = BigDecimal.ZERO;
-
-                    for (TransactionDetails transaction : transactions) {
-                        if (plugin.getSettings().detailedNotifier) {
-                            String soldItemType = StringUtils.format(transaction.getItemStack().getType().name());
-                            String soldItemEarnings = plugin.getSettings().sellFormat ?
-                                    StringUtils.fancyFormat(transaction.getEarnings()) :
-                                    StringUtils.format(transaction.getEarnings());
-
-                            Locale.SOLD_CHEST_LINE.send(offlinePlayer.getPlayer(), transaction.getAmount(),
-                                    soldItemType, soldItemEarnings);
-                        }
-                        totalEarned = totalEarned.add(transaction.getEarnings());
+        long now = System.currentTimeMillis();
+        sales.drain(now, plugin.getSettings().notifyInterval * 50L).forEach((uuid, summary) -> {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) return; // Like the old notifier, expired offline summaries are discarded.
+            Scheduler.runTask(player, () -> {
+                if (!player.isOnline() || sales.getMode(uuid).equals("never")) return;
+                Locale.SOLD_CHEST_HEADER.send(player);
+                BigDecimal total = BigDecimal.ZERO;
+                for (Map.Entry<String, SaleNotifications.Line> entry : summary.items.entrySet()) {
+                    SaleNotifications.Line line = entry.getValue();
+                    if (plugin.getSettings().detailedNotifier) {
+                        Locale.SOLD_CHEST_LINE.send(player, line.amount, StringUtils.format(entry.getKey()),
+                                plugin.getSettings().sellFormat ? StringUtils.fancyFormat(line.earnings) :
+                                        StringUtils.format(line.earnings));
                     }
-
-                    Locale.SOLD_CHEST_FOOTER.send(offlinePlayer.getPlayer(), plugin.getSettings().sellFormat ?
-                            StringUtils.fancyFormat(totalEarned) : StringUtils.format(totalEarned));
+                    total = total.add(line.earnings);
                 }
+                Locale.SOLD_CHEST_FOOTER.send(player, plugin.getSettings().sellFormat ?
+                        StringUtils.fancyFormat(total) : StringUtils.format(total));
             });
-            transactions.clear();
-        }
-
+        });
+        if (plugin.getSettings().notifyInterval <= 0 || now < nextCrafting) return;
+        nextCrafting = now + plugin.getSettings().notifyInterval * 50L;
         synchronized (craftings) {
             craftings.forEach((uuid, transactions) -> {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
@@ -92,22 +96,9 @@ public final class NotifierTask {
         }
     }
 
-    public static synchronized void addTransaction(UUID player, ItemStack itemStack, int amount, double amountEarned) {
-        Set<TransactionDetails> transactionDetails;
-
-        synchronized (transactions) {
-            transactionDetails = transactions.computeIfAbsent(player, p -> new HashSet<>());
-        }
-
-        for (TransactionDetails transaction : transactionDetails) {
-            if (transaction.getItemStack().isSimilar(itemStack)) {
-                transaction.increaseAmount(amount);
-                transaction.increaseEarnings(BigDecimal.valueOf(amountEarned));
-                return;
-            }
-        }
-
-        transactionDetails.add(new TransactionDetails(itemStack, amount, BigDecimal.valueOf(amountEarned)));
+    public static void addTransaction(UUID player, ItemStack itemStack, int amount, double amountEarned) {
+        sales.add(player, itemStack.getType().name(), amount, amountEarned, System.currentTimeMillis(),
+                plugin.getSettings().notifyInterval * 50L);
     }
 
     public static synchronized void addCrafting(UUID player, ItemStack itemStack, int amount) {

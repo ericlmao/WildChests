@@ -3,6 +3,7 @@ package com.bgsoftware.wildchests.command;
 import com.bgsoftware.wildchests.Locale;
 import com.bgsoftware.wildchests.WildChestsPlugin;
 import com.bgsoftware.wildchests.command.commands.CommandGive;
+import com.bgsoftware.wildchests.command.commands.CommandNotifications;
 import com.bgsoftware.wildchests.command.commands.CommandInfo;
 import com.bgsoftware.wildchests.command.commands.CommandLink;
 import com.bgsoftware.wildchests.command.commands.CommandReload;
@@ -27,6 +28,7 @@ public final class CommandsHandler implements CommandExecutor, TabCompleter {
     public CommandsHandler(WildChestsPlugin plugin) {
         this.plugin = plugin;
         registerCommand(new CommandGive());
+        registerCommand(new CommandNotifications());
         registerCommand(new CommandInfo());
         registerCommand(new CommandLink());
         registerCommand(new CommandReload());
