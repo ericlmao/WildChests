@@ -45,3 +45,6 @@ permissions:
     description: Gives access to save database into files.
   wildchests.settings:
     description: Gives access to use settings editor.
+  wildchests.notifications:
+    description: Choose your autosell chat notification frequency.
+    default: true

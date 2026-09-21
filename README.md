@@ -59,3 +59,17 @@ for bug fixes.
 This plugin is licensed under GNU GPL v3.0
 
 This plugin uses HikariCP which you can find [here](https://github.com/brettwooldridge/HikariCP).
+
+## Autosell chat preferences
+
+Players can use `/chests notifications [default|always|1m|5m|15m|30m|1h|never]`.
+`default` retains the configured `notifier-interval`; `always` summarizes sales on
+each one-second notifier poll. Other modes batch sales for the selected interval
+from the first sale. Crafting notifications retain the server cadence.
+
+Preferences persist across restarts in `notification-preferences.properties`.
+Changing cadence restarts the pending summary timer and keeps its totals; `never`
+discards pending chat totals. Expired offline summaries and restart-time pending
+summaries are discarded, as before. Offline earnings and sales are unaffected.
+Sale details are grouped by material (the only item identity shown in chat), so
+custom item variants cannot grow an hourly summary without bound.

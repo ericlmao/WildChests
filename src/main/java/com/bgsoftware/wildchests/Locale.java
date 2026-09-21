@@ -13,6 +13,9 @@ public final class Locale {
 
     private static Map<String, Locale> localeMap = new HashMap<>();
 
+    public static Locale NOTIFICATIONS_MODE = new Locale("NOTIFICATIONS_MODE");
+    public static Locale NOTIFICATIONS_SAVE_FAILED = new Locale("NOTIFICATIONS_SAVE_FAILED");
+    public static Locale NOTIFICATIONS_PLAYER_ONLY = new Locale("NOTIFICATIONS_PLAYER_ONLY");
     public static Locale SOLD_CHEST_HEADER = new Locale("SOLD_CHEST_HEADER");
     public static Locale SOLD_CHEST_LINE = new Locale("SOLD_CHEST_LINE");
     public static Locale SOLD_CHEST_FOOTER = new Locale("SOLD_CHEST_FOOTER");

@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,6 +84,14 @@ public final class WildChestsPlugin extends JavaPlugin implements WildChests {
         getServer().getPluginManager().registerEvents(new ChunksListener(this), this);
         getServer().getPluginManager().registerEvents(new InventoryListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+
+        try {
+            NotifierTask.initialize();
+        } catch (IOException error) {
+            getLogger().severe("Cannot load autosell notification preferences: " + error.getMessage());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         CommandsHandler commandsHandler = new CommandsHandler(this);
         getCommand("chests").setExecutor(commandsHandler);

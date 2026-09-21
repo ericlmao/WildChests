@@ -78,3 +78,6 @@ RELOAD_SUCCESS: '&5&lWildChests &7Successfully reloaded the configuration files.
 SOLD_CHEST_HEADER: '&5&lWildChests &7Your transactions in the last 10 minutes:'
 SOLD_CHEST_LINE: '&5&lWildChests &7x{0} {1} for ${2}'
 SOLD_CHEST_FOOTER: '&5&lWildChests &7You earned a total of ${0}'
+NOTIFICATIONS_MODE: '&aAutosell notifications: {0}. Use /chests notifications to choose default, always, 1m, 5m, 15m, 30m, 1h or never.'
+NOTIFICATIONS_SAVE_FAILED: '&cCould not save your notification preference. Please try again later.'
+NOTIFICATIONS_PLAYER_ONLY: '&cOnly players can set autosell notifications.'
